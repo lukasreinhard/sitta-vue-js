@@ -1,0 +1,6 @@
+<span class="status-wrap" tabindex="0" @mouseenter="showNote = true" @mouseleave="showNote = false" @focus="showNote = true" @blur="showNote = false" @keydown.esc="showNote = false" @click="showNote = true" aria-label="Status stok dan catatan">
+  <span v-if="qty === 0" class="badge danger">Kosong</span>
+  <span v-else-if="qty < safety" class="badge warning">Menipis</span>
+  <span v-else class="badge success">Aman</span>
+  <span v-show="showNote" class="tooltip" role="tooltip" v-html="safeNote"></span>
+</span>

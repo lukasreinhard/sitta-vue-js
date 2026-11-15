@@ -1,0 +1,43 @@
+<section>
+  <div class="section-heading"><div><h2>Stok Bahan Ajar</h2><p class="muted">Kelola persediaan bahan ajar di setiap UT-Daerah.</p></div><button @click="openForm(null)">Tambah bahan ajar</button></div>
+  <div class="panel filters">
+    <label>UT-Daerah<select v-model="region"><option value="">Semua daerah</option><option v-for="name in regions" :key="name">{{ name }}</option></select></label>
+    <label v-if="region">Kategori<select v-model="category"><option value="">Semua kategori</option><option v-for="name in availableCategories" :key="name">{{ name }}</option></select></label>
+    <label>Kondisi stok<select v-model="stockFilter"><option value="">Semua kondisi</option><option value="low">Di bawah safety (perlu reorder)</option><option value="empty">Stok kosong</option></select></label>
+    <label>Urutkan<select v-model="sortBy"><option value="judul">Judul</option><option value="qty">Jumlah stok</option><option value="harga">Harga</option></select></label>
+    <label>Arah<select v-model="direction"><option value="asc">Naik</option><option value="desc">Turun</option></select></label>
+    <button class="secondary" @click="resetFilters">Reset filter</button>
+  </div>
+  <p class="muted">{{ displayedStocks.length }} dari {{ stocks.length }} bahan ajar. Arahkan kursor atau fokus ke status untuk melihat catatan.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>No.</th><th>Kode / Mata kuliah</th><th>Kategori</th><th>UT-Daerah</th><th>Rak</th><th>Harga</th><th>Stok</th><th>Safety</th><th>Status</th><th>Aksi</th></tr></thead>
+      <tbody>
+        <tr v-for="(item, index) in displayedStocks" :key="item.upbjj + '-' + item.kode">
+          <td>{{ index + 1 }}</td><td><strong v-text="item.kode"></strong><br>{{ item.judul }}</td><td>{{ item.kategori }}</td><td>{{ item.upbjj }}</td><td>{{ item.lokasiRak }}</td>
+          <td class="nowrap">{{ item.harga | rupiah }}</td><td class="nowrap">{{ item.qty | buah }}</td><td class="nowrap">{{ item.safety | buah }}</td>
+          <td><status-badge :qty="item.qty" :safety="item.safety" :note="item.catatanHTML"></status-badge></td>
+          <td><div class="actions"><button class="small secondary" @click="openForm(item)" :aria-label="'Edit ' + item.judul">Edit</button><button class="small delete" @click="pendingDelete = item" :aria-label="'Hapus ' + item.judul">Hapus</button></div></td>
+        </tr>
+        <tr v-if="!displayedStocks.length"><td colspan="10" class="empty">Tidak ada bahan ajar yang sesuai filter.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <form v-if="formOpen" ref="stockForm" class="panel" @submit.prevent="save" @keydown.enter.prevent="save" novalidate>
+    <h3>{{ editing === null ? 'Tambah bahan ajar' : 'Edit bahan ajar' }}</h3>
+    <ul v-if="errors.length" class="message error" role="alert"><li v-for="error in errors" :key="error">{{ error }}</li></ul>
+    <div class="form-grid">
+      <label>Kode mata kuliah<input ref="code" v-model.trim="form.kode" required placeholder="Contoh: EKMA4116"></label>
+      <label>Nama mata kuliah<input v-model.trim="form.judul" required></label>
+      <label>Kategori<select v-model="form.kategori" required><option value="">Pilih kategori</option><option v-for="name in categories" :key="name">{{ name }}</option></select></label>
+      <label>UT-Daerah<select v-model="form.upbjj" required><option value="">Pilih UT-Daerah</option><option v-for="name in regions" :key="name">{{ name }}</option></select></label>
+      <label>Lokasi rak<input v-model.trim="form.lokasiRak" required placeholder="Contoh: R1-A3"></label>
+      <label>Harga (Rp)<input type="number" min="0" v-model.number="form.harga" required></label>
+      <label>Jumlah stok (buah)<input type="number" min="0" step="1" v-model.number="form.qty" required></label>
+      <label>Safety stock (buah)<input type="number" min="0" step="1" v-model.number="form.safety" required></label>
+      <label class="full">Catatan (opsional)<input v-model.trim="form.catatanHTML" placeholder="Boleh memakai tag em, strong, u, i, b, atau br."></label>
+    </div>
+    <div class="actions"><button type="submit">Simpan</button><button type="button" class="secondary" @click="formOpen = false">Batal</button><span class="muted">Tekan Enter untuk menyimpan.</span></div>
+  </form>
+  <app-modal :open="!!pendingDelete" title="Hapus bahan ajar?" @cancel="pendingDelete = null" @confirm="remove"><p v-if="pendingDelete">Hapus {{ pendingDelete.kode }} - {{ pendingDelete.judul }} dari stok {{ pendingDelete.upbjj }}?</p></app-modal>
+</section>

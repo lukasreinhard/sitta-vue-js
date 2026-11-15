@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SITTA - Bahan Ajar UT</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header><div class="container"><p>Sistem Pemesanan Bahan Ajar Universitas Terbuka</p></div></header>
+  <main id="app" class="container" v-cloak>
+    <nav aria-label="Menu utama">
+      <button v-for="(label, key) in menus" :key="key" @click="tab = key" :class="{ active: tab === key }" :aria-current="tab === key ? 'page' : null">{{ label }}</button>
+    </nav>
+    <p v-if="loading" role="status">Memuat data...</p>
+    <p v-else-if="error" class="message error" role="alert">{{ error }}</p>
+    <template v-else>
+      <p v-if="notice" class="message" role="status">{{ notice }}</p>
+      <ba-stock-table v-show="tab === 'stok'" :stocks="stocks" :regions="regions" :categories="categories" @save="saveStock" @remove="removeStock"></ba-stock-table>
+      <do-tracking v-show="tab === 'tracking'" :orders="orders" :packages="packages" @progress="addProgress"></do-tracking>
+      <order-form v-show="tab === 'order'" :orders="orders" :packages="packages" :shipping="shipping" :stocks="stocks" @create="createOrder"></order-form>
+    </template>
+  </main>
+  <p id="startup-message" class="container" role="status">Menyiapkan aplikasi...</p>
+  <noscript><p class="container">Aktifkan JavaScript untuk menggunakan aplikasi ini.</p></noscript>
+  <footer class="container">Tugas Praktik 3 · STSI4209 Pemrograman Berbasis Web</footer>
+  <script src="js/vendor/vue.min.js"></script>
+  <script src="js/services/api.js"></script>
+  <script src="js/components/status-badge.js"></script>
+  <script src="js/components/app-modal.js"></script>
+  <script src="js/components/stock-table.js"></script>
+  <script src="js/components/do-tracking.js"></script>
+  <script src="js/components/order-form.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

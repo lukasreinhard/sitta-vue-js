@@ -1,0 +1,10 @@
+<div v-if="open" class="modal-backdrop" @click.self="$emit('cancel')" @keydown.esc="$emit('cancel')" @keydown.tab="trapFocus">
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <h2 id="modal-title">{{ title }}</h2>
+    <slot></slot>
+    <div class="actions">
+      <button type="button" ref="cancel" class="secondary" @click="$emit('cancel')">Batal</button>
+      <button type="button" class="delete" @click="$emit('confirm')">Ya, hapus</button>
+    </div>
+  </section>
+</div>

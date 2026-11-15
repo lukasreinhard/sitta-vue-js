@@ -1,0 +1,23 @@
+<section class="narrow">
+  <h2>Tracking Delivery Order</h2><p class="muted">Cari pengiriman menggunakan nomor DO atau NIM lengkap.</p>
+  <form class="panel search-form" @submit.prevent="find" @keydown.esc.prevent="clear">
+    <label>Nomor DO atau NIM<input v-model.trim="query" placeholder="Contoh: DO2025-0001 atau 123456789"></label>
+    <button type="submit">Cari</button><button type="button" class="secondary" @click="clear">Reset</button>
+    <small class="full muted">Enter untuk mencari, Esc untuk mengosongkan pencarian.</small>
+  </form>
+  <p v-if="error" class="message error" role="alert">{{ error }}</p><p v-if="message" class="message" role="status">{{ message }}</p>
+  <p class="muted">{{ results.length }} delivery order ditemukan.</p>
+  <p v-if="!results.length" class="panel empty">Delivery order tidak ditemukan. Periksa nomor DO atau NIM.</p>
+  <article v-for="order in results" :key="order.nomor" class="panel">
+    <div class="section-heading"><h3>{{ order.nomor }}</h3><span class="badge" :class="order.status === 'Diterima' ? 'success' : 'info'">{{ order.status }}</span></div>
+    <dl class="details"><dt>NIM</dt><dd>{{ order.nim }}</dd><dt>Nama</dt><dd>{{ order.nama }}</dd><dt>Ekspedisi</dt><dd>{{ order.ekspedisi }}</dd><dt>Paket</dt><dd>{{ order.paket }} - {{ packageName(order.paket) }}</dd><dt>Tanggal kirim</dt><dd>{{ order.tanggalKirim | tanggal }}</dd><dt>Total harga</dt><dd>{{ order.total | rupiah }}</dd></dl>
+    <h4>Riwayat perjalanan</h4>
+    <ol v-if="order.perjalanan.length" class="history"><li v-for="(entry, index) in order.perjalanan" :key="index"><time>{{ entry.waktu | waktu }}</time><p>{{ entry.keterangan }}</p></li></ol>
+    <p v-else class="muted">Belum ada progres perjalanan.</p>
+    <form class="progress-form" @submit.prevent="addProgress(order)">
+      <label>Status pengiriman<select v-model="statuses[order.nomor]"><option :value="undefined">{{ order.status }} (saat ini)</option><option>Diproses</option><option>Dalam Perjalanan</option><option>Diterima</option></select></label>
+      <label>Keterangan perjalanan<input v-model.trim="notes[order.nomor]" placeholder="Contoh: Paket tiba di kantor cabang"></label>
+      <button type="submit">Tambah progres</button>
+    </form>
+  </article>
+</section>

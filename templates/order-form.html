@@ -1,0 +1,18 @@
+<section class="narrow">
+  <h2>Pemesanan Bahan Ajar</h2><p class="muted">Isi data mahasiswa dan paket untuk membuat delivery order baru.</p>
+  <p v-if="success" class="message" role="status">{{ success }}</p>
+  <form class="panel" @submit.prevent="save" novalidate>
+    <ul v-if="errors.length" class="message error" role="alert"><li v-for="error in errors" :key="error">{{ error }}</li></ul>
+    <div class="form-grid">
+      <label>Nomor DO (otomatis)<input :value="nextNumber" readonly></label>
+      <label>NIM<input v-model.trim="form.nim" inputmode="numeric" required placeholder="Masukkan NIM"></label>
+      <label>Nama mahasiswa<input v-model.trim="form.nama" required></label>
+      <label>Ekspedisi<select v-model="form.ekspedisi" required><option value="">Pilih ekspedisi</option><option v-for="item in shipping" :key="item.kode" :value="item.kode">{{ shippingName(item) }} - {{ item.nama }}</option></select></label>
+      <label class="full">Paket bahan ajar<select v-model="form.paket" required><option value="">Pilih paket</option><option v-for="item in packages" :key="item.kode" :value="item.kode">{{ item.kode }} - {{ item.nama }}</option></select></label>
+      <div v-if="selectedPackage" class="package-detail full"><strong>Isi paket</strong><p class="muted" v-text="packageHint"></p><ul><li v-for="(code, index) in selectedPackage.isi" :key="code">{{ index + 1 }}. {{ code }} - {{ courseTitle(code) }}</li></ul></div>
+      <label>Tanggal kirim<input type="date" v-model="form.tanggalKirim" required><span class="muted">{{ form.tanggalKirim | tanggal }}</span></label>
+      <div><span class="field-label">Total harga</span><p class="total">{{ (selectedPackage ? selectedPackage.harga : 0) | rupiah }}</p></div>
+    </div>
+    <button type="submit">Buat delivery order</button>
+  </form>
+</section>
