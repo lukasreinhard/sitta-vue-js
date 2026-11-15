@@ -50,11 +50,12 @@ window.Api = {
   },
   nextOrderNumber(orders, year = new Date().getFullYear()) {
     const prefix = 'DO' + year + '-';
+    // Nomor urut berlanjut dari seluruh DO, termasuk dari tahun sebelumnya.
     const sequence = orders.reduce((max, order) => {
-      const suffix = order.nomor.slice(prefix.length);
-      return order.nomor.startsWith(prefix) && /^\d+$/.test(suffix) ? Math.max(max, Number(suffix)) : max;
+      const match = /^DO\d{4}-(\d+)$/.exec(order.nomor);
+      return match ? Math.max(max, Number(match[1])) : max;
     }, 0);
-    return prefix + String(sequence + 1).padStart(3, '0');
+    return prefix + String(sequence + 1).padStart(4, '0');
   },
   // Hanya tag format sederhana yang diizinkan untuk catatan v-html.
   safeNote(html) {

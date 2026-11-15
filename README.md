@@ -14,7 +14,7 @@ Aplikasi sederhana pemesanan bahan ajar UT menggunakan Vue.js 2.7.16, HTML, dan 
 - **Stok:** daftar bahan ajar, filter UT-Daerah, kategori bergantung daerah, stok di bawah safety atau kosong, urut judul/stok/harga naik atau turun, serta reset filter.
 - **Pengelolaan stok:** tambah, edit, validasi, simpan dengan Enter, hapus dengan dialog konfirmasi. Kode mata kuliah harus unik dalam UT-Daerah yang sama.
 - **Status:** Aman, Menipis, dan Kosong. Catatan berformat HTML muncul saat status diarahkan kursor, difokuskan dengan keyboard, atau diklik.
-- **Pemesanan:** nomor DO otomatis sesuai tahun berjalan, NIM, nama, ekspedisi, detail paket, tanggal kirim, dan harga dari paket.
+- **Pemesanan:** nomor DO memakai tahun berjalan dan nomor urut minimal empat digit yang berlanjut lintas tahun (contoh: `DO2025-0001` dilanjutkan `DO2026-0002`), NIM, nama, ekspedisi, detail paket, tanggal kirim, dan harga dari paket. Nomor pesanan yang sudah tersimpan tetap dipertahankan.
 - **Tracking:** cari berdasarkan nomor DO atau NIM lengkap dengan Enter; Esc atau Reset menghapus pencarian; tambah keterangan perjalanan dan status dengan waktu lokal otomatis.
 - **Penyimpanan:** data awal dari JSON, perubahan disimpan pada `localStorage` browser. Tidak ada database maupun perubahan otomatis pada file JSON.
 
